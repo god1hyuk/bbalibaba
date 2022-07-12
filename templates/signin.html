@@ -2,9 +2,72 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="../static/css/reset.css">
+    <link rel="stylesheet" href="../static/css/common.css">
+    <title>로그인 사이트</title>
+
+    <script>
+        {% if msg %}
+            alert("{{ msg }}")
+        {% endif %}
+
+        function take_user() {
+            let ID = $('#ID_name').val()
+            let password = $('#password').val()
+
+            $.ajax({
+                type: 'POST',
+                url: '/login',
+                data: {'id_give':ID, 'password_give':password},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        // 로그인이 정상적으로 되면, 토큰을 받아옵니다.
+                        // 이 토큰을 mytoken이라는 키 값으로 쿠키에 저장합니다.
+                        $.cookie('mytoken', response['token'], {path:'/index'});
+                        alert('로그인 완료!')
+                        window.location.href = '/index'
+                    } else {
+                        // 로그인이 안되면 에러메시지를 띄웁니다.
+                        alert(response['msg'])
+                    }
+                }
+            })
+        }
+
+
+    </script>
 </head>
+
 <body>
 
+    <header class="container-fluid">
+        <a href="index.html" class="logo">LOGO</a>
+    </header>
+
+    <div class="container content-wrap main">
+        <div class="content all-items">
+            <h1 class="content-title">로그인 페이지</h1>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">ID</span>
+                <input id="ID_name" type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon2">P.W</span>
+                <input id="password" type="password" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="basic-addon2">
+            </div>
+
+            <button type="button" onclick="take_user()" class="btn btn-dark">로그인</button>
+
+        </div>
+    </div>
+
+    <script src="../static/library/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="../static/js/post.js"></script>
+
 </body>
+
 </html>

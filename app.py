@@ -50,6 +50,12 @@ def post_product():
     db.products.insert_one(doc)
     return jsonify({'msg': '상품이 등록되었습니다.'})
 
+@app.route("/products", methods=["GET"])
+def product_get():
+    product_list = list(db.products.find({}, {'_id': False}))
+
+    return jsonify({'products': product_list})
+
 @app.route('/product_modify')
 def product_modify_page():
     return render_template('product_modify.html')

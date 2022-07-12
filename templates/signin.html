@@ -8,20 +8,34 @@
     <title>로그인 사이트</title>
 
     <script>
+        {% if msg %}
+            alert("{{ msg }}")
+        {% endif %}
+
         function take_user() {
             let ID = $('#ID_name').val()
             let password = $('#password').val()
 
             $.ajax({
                 type: 'POST',
-                url: '/auction',
+                url: '/login',
                 data: {'id_give':ID, 'password_give':password},
                 success: function (response) {
-                    alert(response['msg'])
-                    window.location.reload()
+                    if (response['result'] == 'success') {
+                        // 로그인이 정상적으로 되면, 토큰을 받아옵니다.
+                        // 이 토큰을 mytoken이라는 키 값으로 쿠키에 저장합니다.
+                        $.cookie('mytoken', response['token'], {path:'/index'});
+                        alert('로그인 완료!')
+                        window.location.href = '/index'
+                    } else {
+                        // 로그인이 안되면 에러메시지를 띄웁니다.
+                        alert(response['msg'])
+                    }
                 }
             })
         }
+
+
     </script>
 </head>
 

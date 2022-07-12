@@ -11,31 +11,31 @@
         <link rel="stylesheet" href="../static/css/common.css">
         <title>회원가입 사이트</title>
 
-<!--        <script>-->
-<!--            function save_user() {-->
-<!--                let set_id = $('#set_id').val()-->
-<!--                let set_pw = $('#set_pw').val()-->
-<!--                let call = $('#call').val()-->
-<!--                let birth = $('#birth').val()-->
-<!--                let email = $('#email').val()-->
+        <script>
+            function save_user() {
+                let set_id = $('#set_id').val()
+                let set_pw = $('#set_pw').val()
+                let call = $('#call').val()
+                let birth = $('#birth').val()
+                let email = $('#email').val()
 
-<!--                $.ajax({-->
-<!--                    type: 'POST',-->
-<!--                    url: '/auction',-->
-<!--                    data: {-->
-<!--                        'set_id_give': set_id,-->
-<!--                        'set_pw_give': set_pw,-->
-<!--                        'call_give': call,-->
-<!--                        'birth_give': birth,-->
-<!--                        'email_give': email-->
-<!--                    },-->
-<!--                    success: function (response) {-->
-<!--                        alert(response['msg'])-->
-<!--                        window.location.reload()-->
-<!--                    }-->
-<!--                })-->
-<!--            }-->
-<!--        </script>-->
+                $.ajax({
+                    type: 'POST',
+                    url: '/auction',
+                    data: {
+                        'set_id_give': set_id,
+                        'set_pw_give': set_pw,
+                        'call_give': call,
+                        'birth_give': birth,
+                        'email_give': email
+                    },
+                    success: function (response) {
+                        alert(response['msg'])
+                        window.location.reload()
+                    }
+                })
+            }
+        </script>
 
 </head>
 

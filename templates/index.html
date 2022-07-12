@@ -6,15 +6,15 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <!--    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>-->
     <script src="../static/js/get.js"></script>
-    <script src="../static/js/post.js"></script>
+    <script src="../static/js/post_item.js"></script>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" />
     <link rel="stylesheet" href="../static/css/reset.css"/>
     <link rel="stylesheet" href="../static/css/common.css"/>
     <link rel="stylesheet" href="../static/css/main.css"/>
 
-
     <title>중고 경매 사이트</title>
+
     <script>
         $(document).ready(function () {
             listing();
@@ -23,24 +23,31 @@
         function listing() {
             $.ajax({
                 type: 'GET',
-                url: '/movie',  //url 이름 바꿔야함
+                url: '/products',  //url 이름 바꿔야함
                 data: {},
                 success: function (response) {
-                    let rows = response['movies']
+                    let rows = response['products']
                     for (let i = 0; i < rows.length; i++) {
-                        let title = rows[i]['title']
-                        let image = rows[i]['image']
-                        let price = rows[i]['price']
-                        // let star = rows[i]['star']
-                        let detail = rows[i]['detail']
+                        // let category = rows[i]['category']
+                        let product_name = rows[i]['product_name']
+                        let product_desc = rows[i]['product_desc']
+                        let start_price = rows[i]['start_price']
+                        let product_image = rows[i]['product_image']
+                        let user_id = rows[i]['user_id']
+                        let user_name = rows[i]['user_name']
+                        let user_phone = rows[i]['user_phone']
+
+                        let num = Number(start_price)
+                        let price = num.toLocaleString('ko-KR')
+
+                        // let detail =
 
                         let temp_html = `<div class="col">
                                             <div class="card">
-                                                <img onclick="location.href='${detail}'" src="${image}" class="card-img-top" alt="...">
+                                                <img onclick="location.href='#'" src="${product_image}" class="card-img-top" alt="...">
                                                 <div class="card-body">
-                                                    <a class="card-title" href="${detail}" class="card-title">${title}</a>
-                                                    <p class="card-text">${price}</p>
-<!--                                                    <p class="card-text">${price}</p>-->
+                                                    <a class="card-title" href="#" class="card-title">${product_name}</a>
+                                                    <p class="card-text">${price}원</p>
                                                 </div>
                                             </div>
                                         </div>`
@@ -98,7 +105,7 @@
                         <option value="3">중고가전</option>
                     </select>
                 </div>
-                <button type="button" class="btn btn-dark" onclick="window.location.href='/post_item'">게시물 작성</button>
+                <button type="button" class="btn btn-dark" onclick="window.location.href='/product_post'">게시물 작성</button>
             </div>
                 <div class="row row-cols-1 row-cols-md-4 g-4" id="cards-box">
                 </div>

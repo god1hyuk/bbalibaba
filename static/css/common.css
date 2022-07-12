@@ -66,6 +66,9 @@ header nav a {
 #cards-box {
     margin-top: 15px;
 }
+#cards-box div div{
+    min-width: 200px;
+}
 #cards-box div div:hover:not(:nth-child(2)) {
     box-shadow: 0 0 0 3px deepskyblue;
 }

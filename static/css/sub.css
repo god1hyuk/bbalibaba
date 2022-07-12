@@ -1,11 +1,33 @@
 /* 게시물 작성 페이지 */
 .post-box .img-box {
-    max-width: 300px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 250px;
+    overflow: hidden;
+    transition: all .13s;
+}
+.post-box .img-box:hover {
+    background-color: rgba(0, 0, 0, .5);
+}
+.post-box .img-box:hover .del-btn {
+    opacity: 1;
 }
 .post-box .img-box img {
     width: 100%;
+    z-index: -1;
 }
 .post-box .img-box .del-btn {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    width: 30px;
+    height: 30px;
+    background-color: transparent;
+    background-image: url(../images/icon_delete.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
     border: none;
-    background: none;
+    opacity: 0;
 }

@@ -1,0 +1,11 @@
+/* 게시물 작성 페이지 */
+.post-box .img-box {
+    max-width: 300px;
+}
+.post-box .img-box img {
+    width: 100%;
+}
+.post-box .img-box .del-btn {
+    border: none;
+    background: none;
+}

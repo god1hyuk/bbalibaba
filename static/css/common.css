@@ -56,15 +56,22 @@ header nav a {
     font-size: 20px;
     margin: 0 5px;
 }
-.btn-wrap.submit .btn-outline-dark:hover {
+.btn-wrap.submit .btn-outline-dark:hover,
+.btn-wrap.login .btn-outline-dark:hover {
     color: #212529;
     background-color: #fff;
     border-color: #212529;
+}
+.btn-wrap.login .btn {
+    margin-left: 5px;
 }
 
 /* product list */
 #cards-box {
     margin-top: 15px;
+}
+#cards-box div div{
+    min-width: 200px;
 }
 #cards-box div div:hover:not(:nth-child(2)) {
     box-shadow: 0 0 0 3px deepskyblue;

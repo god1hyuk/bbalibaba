@@ -1,33 +1,45 @@
-/* 게시물 작성 페이지 */
-.post-box .img-box {
-    position: relative;
+/* 상품 상세 페이지 */
+.product-info .img-box img {
+    width: 100%;
+}
+
+.product-info #product-desc {
+    line-height: 24px;
+    font-size: 18px;
+}
+
+#bid-list li {
     display: flex;
     align-items: center;
-    height: 250px;
-    overflow: hidden;
-    transition: all .13s;
+    justify-content: space-between;
+    height: 75px;
+    padding: 0 25px;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
+    border-radius: 7px;
+    transition: transform .15s;
 }
-.post-box .img-box:hover {
-    background-color: rgba(0, 0, 0, .5);
+#bid-list li:hover {
+    transform: translateY(-3px);
 }
-.post-box .img-box:hover .del-btn {
-    opacity: 1;
+#bid-list li:not(:last-child) {
+    margin-bottom: 30px;
 }
-.post-box .img-box img {
-    width: 100%;
-    z-index: -1;
+#bid-list .user-info {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
 }
-.post-box .img-box .del-btn {
-    position: absolute;
-    top: 15px;
-    right: 25px;
-    width: 30px;
-    height: 30px;
-    background-color: transparent;
-    background-image: url(../images/icon_delete.png);
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-    border: none;
-    opacity: 0;
+#bid-list .user-info .user-id {
+    font-weight: 700;
+    margin-right: 15px;
 }
+#bid-list li:first-child .user-info #flag {
+    line-height: 16px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    margin-left: 15px;
+    padding: 10px 8px;
+    background: cornflowerblue;
+}
+

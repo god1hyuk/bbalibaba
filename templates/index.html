@@ -26,29 +26,29 @@
                     let rows = response['products']
                     for (let i = 0; i < rows.length; i++) {
                         // let category = rows[i]['category']
-                        let product_name = rows[i]['product_name']
-                        let product_desc = rows[i]['product_desc']
-                        let start_price = rows[i]['start_price']
-                        let product_image = rows[i]['product_image']
-                        let user_id = rows[i]['user_id']
-                        let user_name = rows[i]['user_name']
-                        let user_phone = rows[i]['user_phone']
+                        let product_name = rows[i]['product_name'];
+                        let product_desc = rows[i]['product_desc'];
+                        let start_price = rows[i]['start_price'];
+                        let product_image = rows[i]['product_image'];
+                        let user_id = rows[i]['user_id'];
+                        let user_name = rows[i]['user_name'];
+                        let user_phone = rows[i]['user_phone'];
 
-                        let num = Number(start_price)
-                        let price = num.toLocaleString('ko-KR')
+                        let num = Number(start_price);
+                        let price = num.toLocaleString('ko-KR');
 
-                        // let detail =
-
-                        let temp_html = `<div class="col">
-                                            <div class="card">
-                                                <img onclick="location.href='#'" src="${product_image}" class="card-img-top" alt="...">
-                                                <div class="card-body">
-                                                    <a class="card-title" href="#" class="card-title">${product_name}</a>
-                                                    <p class="card-text">입찰 시작가 ${price}원</p>
-                                                    <p class="card-text">현재 입찰가 ${price}원</p>
-                                                </div>
-                                            </div>
-                                        </div>`
+                        let temp_html = `
+                            <div class="col">
+                                <div class="card">
+                                    <img onclick="location.href='#'" src="${product_image}" class="card-img-top" alt="...">
+                                    <div class="card-body">
+                                        <a class="card-title" href="#" class="card-title">${product_name}</a>
+                                        <p class="card-text"><span>최초 입찰가</span> ${price}원</p>
+                                        <p class="card-text"><span>입찰가 현황</span> ${price}원</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
                         $('#cards-box').append(temp_html)
                     }
                 }
@@ -97,8 +97,7 @@
             <div class="btn-wrap d-flex justify-content-end mb-3">
                 <button type="button" class="btn btn-dark" onclick="window.location.href='/product_post'">상품 등록</button>
             </div>
-                <div class="row row-cols-1 row-cols-md-4 g-4" id="cards-box">
-                </div>
+                <div class="row row-cols-1 row-cols-md-4 g-4 product-list" id="cards-box"></div>
             </div>
         </div>
     </div>

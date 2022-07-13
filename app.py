@@ -5,6 +5,10 @@ from pymongo import MongoClient
 client = MongoClient('mongodb+srv://god1hyuk:gkdgo11wh@bbalibaba.pcvsk.mongodb.net/?retryWrites=true&w=majority')
 db = client.bbalibaba
 
+from bson.json_util import ObjectId
+# from bson.json_util import dumps
+import json
+
 import hashlib
 import jwt
 import datetime
@@ -21,21 +25,28 @@ def signin_page():
 
 @app.route('/signin', methods=["POST"])
 def api_login():
+    #로그인
     id_receive = request.form['id_give']
     password_receive = request.form['password_give']
-    print(id_receive,password_receive)
-
+    # 해시
     pw_hash = hashlib.sha256(password_receive.encode('utf-8')).hexdigest()
     result = db.users.find_one({'id': id_receive, 'password': pw_hash})
 
-    if result is not None:
+    payload = {
+        'id': id_receive,
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=60 * 30)
+    }
+    token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+    print(token)
 
+    if result is not None:
         payload = {
             'id': id_receive,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=10)
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=60*30)
         }
-        token = jwt.encode(payload, SECRET_KEY, algorithm='HS256').decode('utf-8')
+        token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
         return jsonify({'result': 'success', 'token': token})
+    # 못찾으면
     else:
         return jsonify({'result': 'fail', 'msg': '아이디/비밀번호가 일치하지 않습니다.'})
 
@@ -61,8 +72,13 @@ def web_signup_post():
         'e_mail': e_mail_receive,
     }
     db.users.insert_one(doc)
-
     return jsonify({'msg': '가입이 완료되었습니다!'})
+
+@app.route('/sign_up/check_dup', methods=['POST'])
+def check_dup():
+    username_receive = request.form['username_give']
+    exists = bool(db.users.find_one({"id": username_receive}))
+    return jsonify({'result': 'success', 'exists': exists})
 
 @app.route('/mypage')
 def my_page():
@@ -72,9 +88,8 @@ def my_page():
 def product_post_page():
     return render_template('product_post.html')
 
-@app.route("/products", methods=["POST"])
+@app.route('/products', methods=["POST"])
 def post_product():
-    category_receive = request.form['category_give']
     productName_receive = request.form['productName_give']
     productDesc_receive = request.form['productDesc_give']
     startPrice_receive = request.form['startPrice_give']
@@ -84,7 +99,52 @@ def post_product():
     userPhone_receive = request.form['userPhone_give']
 
     doc = {
-        'category': category_receive,
+        'is_open': 1,
+        'product_name': productName_receive,
+        'product_desc': productDesc_receive,
+        'start_price': int(startPrice_receive),
+        'price_status': int(startPrice_receive),
+        'product_image': productImg_receive,
+        'user_id': userId_receive,
+        'user_name': userName_receive,
+        'user_phone': userPhone_receive,
+        'bid_list': []
+    }
+    db.products.insert_one(doc)
+    return jsonify({'msg': '상품이 등록되었습니다.'})
+
+@app.route("/products", methods=["GET"])
+def product_get():
+    product_list = list(db.products.find({}))
+    for products in product_list:
+        products["_id"] = str(products["_id"])
+        # print(products)
+    return jsonify({'products': product_list})
+    # return jsonify({'products':dumps(product_list,ensure_ascii = False)})
+    #                             # _id값 표시, 제이슨 형식 변환, 유니코드 한글로표시
+
+@app.route('/product_modify')
+def product_modify_page():
+    return render_template('product_modify.html')
+
+@app.route("/modify", methods=["POST"])
+def modify_product():
+    productName_receive = request.form['productName_give']
+    productDesc_receive = request.form['productDesc_give']
+    startPrice_receive = request.form['startPrice_give']
+    productImg_receive = request.form['productImg_give']
+    userId_receive = request.form['userId_give']
+    userName_receive = request.form['userName_give']
+    userPhone_receive = request.form['userPhone_give']
+
+    product_list = list(db.products.find({}))
+    for product in product_list:
+        product["_id"] = str(product["_id"])
+        id = product["_id"]
+        # print(ObjectId(id))
+
+
+    doc = {
         'product_name': productName_receive,
         'product_desc': productDesc_receive,
         'start_price': startPrice_receive,
@@ -94,22 +154,42 @@ def post_product():
         'user_name': userName_receive,
         'user_phone': userPhone_receive
     }
-    db.products.insert_one(doc)
-    return jsonify({'msg': '상품이 등록되었습니다.'})
-
-@app.route("/products", methods=["GET"])
-def product_get():
-    product_list = list(db.products.find({}, {'_id': False}))
-
-    return jsonify({'products': product_list})
-
-@app.route('/product_modify')
-def product_modify_page():
-    return render_template('product_modify.html')
+    print(id)
+    db.products.update_one({'_id': id},{'$set' : {'product_name': productName_receive,'product_desc': productDesc_receive,'start_price': startPrice_receive,'price_status': startPrice_receive,'product_image': productImg_receive}})
+    return jsonify({'msg': '수정이 완료되었습니다.'})
 
 @app.route('/detail')
 def detail_page():
     return render_template('detail.html')
+
+@app.route('/products/bidlist', methods=["POST"])
+def add_bidlist():
+    price_receive = request.form['price_give']
+
+    db.products.update_one(
+        {'product_name': 'SONY WH-910N'},
+        {'$push': {'bid_list': {'user_id': 'god1hyuk', 'bid_price': int(price_receive), 'choice': 0}}}
+    )
+    db.products.update_one({'product_name': 'SONY WH-910N'}, {'$set': {'price_status': int(price_receive)}})
+    price_status = db.products.find_one({'product_name': 'SONY WH-910N'})['price_status']
+
+    print(price_status)
+    return jsonify({'msg': '입찰 완료 되었습니다.', 'price_status': int(price_status)})
+
+@app.route('/products/bidlist/choice', methods=["POST"])
+def choice_bid():
+    # db.products.update_one({'product_name': 'SONY WH-910N'}, {'$set': {'is_open': 0}})
+    bid_list = list(db.products.find_one({'product_name': 'SONY WH-910N'})['bid_list'])
+    print(bid_list)
+    # db.products.update(
+    #     {bid_list: bid_list[0]['choice']},
+    #     {'list.$': 0}
+    # )
+    # db.products.update_one({'product_name': 'SONY WH-910N'}, {'$set': {'bid_list': {'bid_list'[0], 'choice': 1}}})
+
+    # print(choice)
+    # db.products.update_one({'product_name': 'SONY WH-910N'}, {'$set': {'is_open': 0}})
+    return jsonify({'msg': 'OOO님이 낙찰 확정 되었습니다.'})
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)

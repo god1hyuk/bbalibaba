@@ -20,21 +20,29 @@
                 let birth = $('#birth').val()
                 let email = $('#email').val()
 
-                $.ajax({
-                    type: 'POST',
-                    url: '/signup',
-                    data: {
-                        'set_id_give': set_id,
-                        'set_pw_give': set_pw,
-                        'call_give': call,
-                        'birth_give': birth,
-                        'email_give': email
-                    },
-                    success: function (response) {
-                        alert(response['msg'])
-                        window.location.reload()
-                    }
-                })
+                const eng_check = /[a-zA-Z]/g;
+
+                if (eng_check.test(set_id)) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/signup',
+                        data: {
+                            'set_id_give': set_id,
+                            'set_pw_give': set_pw,
+                            'call_give': call,
+                            'birth_give': birth,
+                            'email_give': email
+                        },
+                        success: function (response) {
+                            alert(response['msg'])
+                            window.location.reload();
+                        }
+                    })
+                } else {
+                    alert('영문만 입력해주세요.');
+                }
+
+
             }
         </script>
 

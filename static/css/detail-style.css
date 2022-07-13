@@ -2,7 +2,6 @@
 
 body{padding: 50px;}
 
-.countdown{margin-top: 50px;}
 
 .product_view{margin-top: 50px;}
 .product_view{ position: relative; padding: 0 0 0 395px; width: 962px; box-sizing: border-box;}
@@ -11,8 +10,6 @@ body{padding: 50px;}
 .product_view .img li img{width: 68px; height: 60px; border: 1px solid#e8e8e8; margin-bottom: 10px;}
 .product_view h2 { margin: 0 0 15px; padding: 0 0 20px; border-bottom: 2px solid #333; font-size: 24px; color: #232323; line-height: 26px;}
 
-
-.product_view table{margin-top: 50px;}
 
 .product_view table th,
 .product_view table td{ padding: 14px 0; font-size: 15px; color: #444; text-align: left;}

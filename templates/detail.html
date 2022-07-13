@@ -66,31 +66,28 @@
                 success: function (response) {
                     let rows = response['orders']
 
-                    // 내역 / 히스토리 부분 기능
+                    // 내역 / 히스토리 부분 기능(현재 입찰가보다 가격이 낮으면 입찰불가)
                     let max1 = Number(rows[0]['money'])
 
                     for (let i = 0; i < rows.length; i++) {
-                        if( max1 < Number(rows[i]['money'])){
-                            let money = Number(rows[i]['money'])
+                        if (max1 < Number(rows[i]['money'])) {
+                            max1 = Number(rows[i]['money'])
                             let temp_html = ` <tr>
                                                 <th scope="col"> db에서 회원아이디 가져오기</th>
-                                                <th scope="col"> ${money} </th>
+                                                <th scope="col"> ${max1} </th>
                                             </tr>`
-                                            $('#order-box').append(temp_html)
-                            } else{
-                                continue;
+                            $('#order-box').prepend(temp_html)
                         }
                     }
 
                     // 입찰가 현황 기능
                     let max = Number(rows[0]['money'])
                     for (let i = 0; i < rows.length; i++) {
-                        if( max < Number(rows[i]['money'])){
+                        if (max < Number(rows[i]['money'])) {
                             max = Number(rows[i]['money'])
                         }
-                    } $('#current_prince-box').append(max + '원')
-
-
+                    }
+                    $('#current_prince-box').append(max)
                 }
 
             });

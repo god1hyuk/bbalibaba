@@ -22,6 +22,8 @@
             show_product();
         });
 
+        const pathname_id = window.location.pathname.split('/')[2];
+
         function show_product() {
             $.ajax({
                 type: 'GET',
@@ -29,45 +31,43 @@
                 success: function (response) {
                     const rows = response['products'];
 
-                    $('#product-name').text(rows[0]['product_name']);
-                    $('#product-img').attr('src', rows[0]['product_image']);
-                    $('#product-desc').text(rows[0]['product_desc']);
-                    $('#start-price').text(`${rows[0]['start_price'].toLocaleString('ko-KR')}원`);
-                    $('#price-status').text(`${rows[0]['price_status'].toLocaleString('ko-KR')}원`);
+                    rows.forEach(function (row) {
+                        const _id = row['_id'];
 
-                    const _id = rows[0]['_id'];
+                        if (_id === pathname_id) {
+                            const modify_btn = `<button type="button" class="btn btn-dark modify-link" onclick="window.location.href='/product_modify'">상품정보 수정</button>`;
+                            const delete_btn = `<button type="button" class="btn btn-danger" onclick="delete_product('${_id}')">상품 삭제</button>`;
 
-                    const modify_btn = `<button type="button" class="btn btn-dark modify-link" onclick="window.location.href='/product_modify'">상품정보 수정</button>`;
-                    const delete_btn = `<button type="button" class="btn btn-danger" onclick="delete_product('${_id}')">상품 삭제</button>`;
+                            $('#product-top-btns').append(modify_btn);
+                            $('#product-top-btns').append(delete_btn);
 
-                    $('#product-top-btns').append(modify_btn);
-                    $('#product-top-btns').append(delete_btn);
+                            row['bid_list'].forEach(function (bid) {
 
-                    rows[0]['bid_list'].forEach(bid => {
-                        const temp_html = `
-                            <li>
-                                <div class="user-info">
-                                    <p class="user-id">${bid['user_id']}</p>
-                                    <p>${bid['bid_price'].toLocaleString('ko-KR')}원</p>
-                                </div>
-                            </li>
-                        `;
+                                const temp_html = `
+                                    <li>
+                                        <div class="user-info">
+                                            <p class="user-id">${bid['user_id']}</p>
+                                            <p>${bid['bid_price'].toLocaleString('ko-KR')}원</p>
+                                        </div>
+                                    </li>
+                                `;
 
-                        $('#bid-list').prepend(temp_html);
+                                $('#bid-list').prepend(temp_html);
+
+                                if (row['is_open'] === 0) {
+                                    $('#product-name').text(`[경매 종료] ${row['product_name']}`);
+                                    $('#bid-input').attr('disabled', true);
+                                    $('#bid-btn').attr('disabled', true);
+                                    $('#flag').text('낙찰 확정');
+                                    $('#choice-btn').attr('disabled', true);
+                                }
+                            });
+                        }
                     });
-
-                    const choice_btn = `<button type="button" id="choice-btn" class="btn btn-dark" onclick="choice_bid()">낙찰</button>`;
+                    const choice_btn = `<button type="button" id="choice-btn" class="btn btn-dark" onclick="choice_bid('${pathname_id}')">낙찰</button>`;
                     const flag = '<span id="flag">낙찰 후보</span>';
-                    $('#bid-list li:first-child .user-info').append(flag);
-                    $('#bid-list li:first-child').append(choice_btn);
-
-                    if (rows[0]['is_open'] === 0) {
-                        $('#product-name').text(`[경매 종료] ${rows[0]['product_name']}`);
-                        $('#bid-input').attr('disabled', true);
-                        $('#bid-btn').attr('disabled', true);
-                        $('#flag').text('낙찰 확정');
-                        $('#choice-btn').attr('disabled', true);
-                    }
+                    $('#bid-list li:first-of-type .user-info').append(flag);
+                    $('#bid-list li:first-of-type').append(choice_btn);
                 },
                 data: {}
             });
@@ -77,14 +77,13 @@
             const bid_price = $('#bid-input').val();
             const price_status = $('#price-status');
 
-            if (parseInt(bid_price) > parseInt($(price_status).text())) {
+            if (parseInt(bid_price) > parseInt($(price_status).text().replace(',', ''))) {
                 $.ajax({
                     type: 'POST',
                     url: '/products/bidlist',
-                    data: {price_give: bid_price},
+                    data: {pathname_give: pathname_id, price_give: bid_price},
                     success: function (response) {
                         alert(response['msg']);
-
                         $(price_status).text(`${response['price_status']}원`);
                         window.location.reload();
                     }
@@ -94,11 +93,11 @@
             }
         }
 
-        function choice_bid() {
+        function choice_bid(_id) {
             $.ajax({
                 type: 'POST',
                 url: '/products/bidlist/choice',
-                data: {},
+                data: {_id_give: _id},
                 success: function (response) {
                     alert(response['msg']);
                     window.location.reload();
@@ -134,29 +133,29 @@
 
     <div class="container content-wrap sub">
         <div class="content product-info">
-            <div class="d-flex align-items-center justify-content-between mb-5">
-                <h1 id="product-name" class="content-title mb-0"></h1>
+            <div class="content-title-wrap mb-5">
+                <h1 id="product-name" class="content-title mb-0">{{ product['product_name'] }}</h1>
                 <div id="product-top-btns" class="btn-wrap d-flex">
                     <button type="button" class="btn btn-dark" onclick="window.location.href='/'">목록</button>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-5 img-box">
-                    <img id="product-img" src="" alt="" />
+                    <img id="product-img" src="{{ product['product_image'] }}" alt="" />
                 </div>
                 <div class="col-md-7 px-4 d-flex flex-column justify-content-between">
                     <div>
                         <h3 class="content-title-sub">상품 설명</h3>
-                        <p id="product-desc"></p>
+                        <p id="product-desc">{{ product['product_desc'] }}</p>
                     </div>
                     <div>
                         <h4 class="content-title-sub d-flex justify-content-between mb-4">
                             <span>최초 입찰가</span>
-                            <span id="start-price"></span>
+                            <span id="start-price">{{ product['start_price'] }}원</span>
                         </h4>
                         <h3 class="content-title-sub d-flex justify-content-between">
                             <span>입찰가 현황</span>
-                            <span id="price-status"></span>
+                            <span id="price-status">{{ product['price_status'] }}원</span>
                         </h3>
                         <div class="input-group mt-5">
                             <span class="input-group-text">입찰하기</span>

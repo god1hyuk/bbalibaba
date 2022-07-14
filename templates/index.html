@@ -16,7 +16,19 @@
     <script>
         $(document).ready(function () {
             show_product();
+            loginfo();
         });
+
+        function loginfo() {
+            $.ajax({
+                type: 'GET',
+                url: '/login_info_road',
+                data: {},
+                success: function (response) {
+                    const logs = response['user_info'];
+                }
+            });
+        }
 
         function show_product() {
             $.ajax({
@@ -29,16 +41,16 @@
                     for (let i = 0; i < rows.length; i++) {
                         const _id = rows[i]['_id'];
                         const product_name = rows[i]['product_name'];
-                        const start_price = rows[i]['start_price'].toLocaleString('ko-KR');
-                        const price_status = rows[i]['price_status'].toLocaleString('ko-KR');
+                        const start_price = rows[i]['start_price'];
+                        const price_status = rows[i]['price_status'];
                         const product_image = rows[i]['product_image'];
 
                         const temp_html = `
                             <div class="col">
                                 <div class="card">
-                                    <img onclick="location.href='/detail?product=${_id}'" src="${product_image}" class="card-img-top" alt="..." />
+                                    <img onclick="location.href='/detail/${_id}'" src="${product_image}" class="card-img-top" alt="..." />
                                     <div class="card-body">
-                                        <a class="card-title" href="/detail?product=${_id}" class="card-title">${product_name}</a>
+                                        <a class="card-title" href="/detail/${_id}" class="card-title">${product_name}</a>
                                         <p class="card-text"><span>최초 입찰가</span> ${start_price}원</p>
                                         <p class="card-text"><span>입찰가 현황</span> ${price_status}원</p>
                                     </div>
@@ -70,7 +82,7 @@
             <div class="btn-wrap d-flex justify-content-end mb-3">
                 <button type="button" class="btn btn-dark" onclick="window.location.href='/product_post'">상품 등록</button>
             </div>
-                <div class="row row-cols-1 row-cols-md-4 g-4 product-list" id="cards-box"></div>
+                <div class="row row-cols-sm-2 row-cols-lg-4 g-4 product-list" id="cards-box"></div>
             </div>
         </div>
     </div>

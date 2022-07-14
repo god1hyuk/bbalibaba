@@ -15,6 +15,13 @@
         <title>빨리바바 | 회원가입</title>
 
         <script>
+            function btnActive() {
+                const target = document.getElementById('dub-ck');
+                target.disabled = false;
+            }
+
+
+
             function is_nickname(asValue) {
                 var regExp = /^(?=.*[a-zA-Z])[-a-zA-Z0-9_.]{3,10}$/;
                 return regExp.test(asValue);
@@ -25,6 +32,7 @@
             //     return regExp.test(asValue);
 
             function check_dup() {
+
                 let username = $("#set_id").val()
 
                 if (username == "") {
@@ -40,11 +48,18 @@
                             username_give: username
                         },
                         success: function (response) {
-                            if (response["exists"]) {
+                            if (response["exists"] == true) {
                                 alert('이미 존재하는 ID입니다.')
                                 return
-                            } else {
-                                alert('사용할 수 있는 ID입니다.')
+                            } else if (response["exists"] == false) {
+                                alert('사용 가능한 ID입니다.')
+                                btnActive()
+                                {
+                                    const target = document.getElementById('signup_btn');
+                                    target.disabled = false;
+                                }
+                                document.getElementById('set_id').readOnly = true;
+                                return;
                             }
                         }
                     });
@@ -62,7 +77,7 @@
                         for (let i = 0; i < rows.length; i++) {
                             let name = rows[i]['id']
                             if (name = $('#set_id').val()) {
-                                alert('중복된 ID입니다.')
+                                {#alert('중복된 ID입니다.')#}
                                 break
                             }
                         }
@@ -88,7 +103,7 @@
                         },
                         success: function (response) {
                             alert(response['msg'])
-                            window.location.reload();
+                            window.location.href = '/signin_page';
                         }
                     })
                 } else {
@@ -115,8 +130,8 @@
             <div class="input-group mb-4">
                 <span class="input-group-text">아이디</span>
 
-                <input id="set_id" type="text" class="form-control" placeholder="아이디를 입력해주세요."/>
-                <button onclick="check_dup()" class="btn btn-outline-secondary" type="button">중복확인</button>
+                <input id="set_id" value="" type="text" class="form-control" placeholder="아이디를 입력해주세요."/>
+                <button id="dub-ck" onclick="check_dup();btnActive()" class="btn btn-outline-secondary" type="button" value="">중복확인</button>
             </div>
 
             <div class="input-group mb-4">
@@ -140,7 +155,7 @@
             </div>
 
             <div class="btn-wrap d-flex justify-content-end">
-                <button type="button" onclick="save_user()" class="btn btn-dark">회원가입</button>
+                <button id="signup_btn" type="button" onclick="save_user()" class="btn btn-dark" value=""disabled>회원가입</button>
             </div>
         </div>
     </div>

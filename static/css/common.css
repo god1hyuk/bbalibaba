@@ -43,6 +43,17 @@ header nav a {
     font-weight: 600;
     margin-bottom: 15px;
 }
+.content-title-wrap {
+    display: flex;
+    flex-direction: column;
+}
+.content-title-wrap .content-title {
+    line-height: 40px;
+}
+.content-title-wrap .btn-wrap {
+    align-self: flex-end;
+    margin-top: 30px;
+}
 
 /* buttons */
 .btn {
@@ -110,6 +121,7 @@ header nav a {
 }
 .product-list .card a {
     display: inline-block;
+    width: 100%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

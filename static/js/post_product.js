@@ -23,7 +23,7 @@ function post_product() {
         },
         success: function (response) {
             alert(response['msg'])
-            window.location.replace('/');
+            window.location.href= '/';
         }
     });
 }

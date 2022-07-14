@@ -1,5 +1,5 @@
 <!Doctype html>
-<html lang="en" xmlns:float="http://www.w3.org/1999/xhtml" xmlns:width="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <title>빨리바바 | 상품 상세</title>
@@ -9,6 +9,7 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="../static/js/common.js"></script>
     <script src="../static/js/get.js"></script>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" />
@@ -25,22 +26,29 @@
             $.ajax({
                 type: 'GET',
                 url: '/products',
-                data: {},
                 success: function (response) {
                     const rows = response['products'];
 
                     $('#product-name').text(rows[0]['product_name']);
                     $('#product-img').attr('src', rows[0]['product_image']);
                     $('#product-desc').text(rows[0]['product_desc']);
-                    $('#start-price').text(`${rows[0]['start_price']}원`);
-                    $('#price-status').text(`${rows[0]['price_status']}원`);
+                    $('#start-price').text(`${rows[0]['start_price'].toLocaleString('ko-KR')}원`);
+                    $('#price-status').text(`${rows[0]['price_status'].toLocaleString('ko-KR')}원`);
+
+                    const _id = rows[0]['_id'];
+
+                    const modify_btn = `<button type="button" class="btn btn-dark modify-link" onclick="window.location.href='/product_modify'">상품정보 수정</button>`;
+                    const delete_btn = `<button type="button" class="btn btn-danger" onclick="delete_product('${_id}')">상품 삭제</button>`;
+
+                    $('#product-top-btns').append(modify_btn);
+                    $('#product-top-btns').append(delete_btn);
 
                     rows[0]['bid_list'].forEach(bid => {
                         const temp_html = `
                             <li>
                                 <div class="user-info">
                                     <p class="user-id">${bid['user_id']}</p>
-                                    <p>${bid['bid_price']}원</p>
+                                    <p>${bid['bid_price'].toLocaleString('ko-KR')}원</p>
                                 </div>
                             </li>
                         `;
@@ -60,7 +68,8 @@
                         $('#flag').text('낙찰 확정');
                         $('#choice-btn').attr('disabled', true);
                     }
-                }
+                },
+                data: {}
             });
         }
 
@@ -97,6 +106,18 @@
             });
         }
 
+        function delete_product(_id) {
+            $.ajax({
+                type: 'POST',
+                url: '/products/delete',
+                data: {_id_give: _id},
+                success: function (response) {
+                    alert(response['msg']);
+                    window.location.href = '/';
+                }
+            });
+        }
+
     </script>
 </head>
 
@@ -115,9 +136,8 @@
         <div class="content product-info">
             <div class="d-flex align-items-center justify-content-between mb-5">
                 <h1 id="product-name" class="content-title mb-0"></h1>
-                <div class="btn-wrap">
-                    <button type="button" class="btn btn-dark modify-link" onclick="window.location.href='/product_modify'">상품정보 수정</button>
-                    <button type="button" class="btn btn-danger">상품 삭제</button>
+                <div id="product-top-btns" class="btn-wrap d-flex">
+                    <button type="button" class="btn btn-dark" onclick="window.location.href='/'">목록</button>
                 </div>
             </div>
             <div class="row">
@@ -132,15 +152,15 @@
                     <div>
                         <h4 class="content-title-sub d-flex justify-content-between mb-4">
                             <span>최초 입찰가</span>
-                            <span id="start-price">10000원</span>
+                            <span id="start-price"></span>
                         </h4>
                         <h3 class="content-title-sub d-flex justify-content-between">
                             <span>입찰가 현황</span>
-                            <span id="price-status">10000원</span>
+                            <span id="price-status"></span>
                         </h3>
                         <div class="input-group mt-5">
                             <span class="input-group-text">입찰하기</span>
-                            <input type="text" id="bid-input" class="form-control" placeholder="현재 입찰가보다 높은 금액을 입력해주세요."/>
+                            <input type="number" id="bid-input" class="form-control" placeholder="현재 입찰가보다 높은 금액을 입력해주세요."/>
                             <button class="btn btn-dark" type="button" id="bid-btn" onclick="post_bidlist()">입찰</button>
                         </div>
                     </div>
@@ -151,6 +171,5 @@
             <ul id="bid-list"></ul>
         </div>
     </div>
-
 </body>
 </html>

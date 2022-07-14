@@ -72,16 +72,44 @@ header nav a {
     margin-left: 5px;
 }
 
+.top-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: 30px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: 1px;
+    color: #fff !important;
+    background-color: #212529;
+    border-radius: 5px;
+}
+
 /* product list */
 .product-list {
     margin-top: 15px;
+}
+.product-list .card {
+    transition: box-shadow .3s;
+    border: none;
+    user-select: none;
+}
+.product-list .card:hover {
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 .product-list .card img {
     height: 300px;
     object-fit: cover;
 }
+.product-list .card img:hover {
+    cursor: pointer;
+}
 .product-list .card a {
-    display: block;
+    display: inline-block;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

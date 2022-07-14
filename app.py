@@ -80,6 +80,12 @@ def check_dup():
     exists = bool(db.users.find_one({"id": username_receive}))
     return jsonify({'result': 'success', 'exists': exists})
 
+#디비 유저랑 비교
+@app.route("/sginupcmp", methods=["GET"])
+def sginupcmp_get():
+    user_list = list(db.users.find({}, {'_id': False}))
+    return jsonify({'users':user_list})
+
 @app.route('/mypage')
 def my_page():
     return render_template('mypage.html')
@@ -116,12 +122,18 @@ def post_product():
 @app.route("/products", methods=["GET"])
 def product_get():
     product_list = list(db.products.find({}))
-    for products in product_list:
-        products["_id"] = str(products["_id"])
+    for product in product_list:
+        product["_id"] = str(product["_id"])
         # print(products)
     return jsonify({'products': product_list})
     # return jsonify({'products':dumps(product_list,ensure_ascii = False)})
     #                             # _id값 표시, 제이슨 형식 변환, 유니코드 한글로표시
+
+@app.route('/products/delete', methods=["POST"])
+def delete_product():
+    _id_receive = request.form['_id_give']
+    db.products.delete_one({'_id': ObjectId(_id_receive)})
+    return jsonify({'msg': '상품이 삭제되었습니다.'})
 
 @app.route('/product_modify')
 def product_modify_page():
@@ -160,7 +172,8 @@ def modify_product():
 
 @app.route('/detail')
 def detail_page():
-    return render_template('detail.html')
+    id_receive = request.args.get('product')
+    return render_template('detail.html', product_id=id_receive)
 
 @app.route('/products/bidlist', methods=["POST"])
 def add_bidlist():
@@ -178,16 +191,9 @@ def add_bidlist():
 
 @app.route('/products/bidlist/choice', methods=["POST"])
 def choice_bid():
-    # db.products.update_one({'product_name': 'SONY WH-910N'}, {'$set': {'is_open': 0}})
-    bid_list = list(db.products.find_one({'product_name': 'SONY WH-910N'})['bid_list'])
-    print(bid_list)
-    # db.products.update(
-    #     {bid_list: bid_list[0]['choice']},
-    #     {'list.$': 0}
-    # )
+    # bid_list = list(db.products.find_one({'product_name': 'SONY WH-910N'})['bid_list'])
     # db.products.update_one({'product_name': 'SONY WH-910N'}, {'$set': {'bid_list': {'bid_list'[0], 'choice': 1}}})
 
-    # print(choice)
     # db.products.update_one({'product_name': 'SONY WH-910N'}, {'$set': {'is_open': 0}})
     return jsonify({'msg': 'OOO님이 낙찰 확정 되었습니다.'})
 
